@@ -74,22 +74,37 @@ function Report(props: ReportProps) {
       setTimeout(() => window.scrollTo({ top: scroll.current }), 0)
     }} fullScreen onlyCluster={openMap !== 'main' ? openMap : undefined} />
   }
-  return <div className='mt-9'>
+  
+  return <div className='mt-6 pb-8'>
     <Outline clusters={clusters} translator={{...translator, t}} />
     <Header {...props} translator={{...translator, t}} />
-    <div className='text-center max-w-3xl m-auto py-8 px-5'
+    
+    <div className='content-container'
       style={{ display: openMap ? 'none' : 'block' }}>
-      <h2 className='text-xl my-3 font-bold'>{t(config.name)}</h2>
-      <h1 className='text-3xl my-3 mb-10'>{t(config.question)}</h1>
+      
+      {/* メインタイトル */}
+      <div className="text-center mb-8">
+        <h2 className='text-xl my-3 font-bold text-gray-800'>{t(config.name)}</h2>
+        <h1 className='text-3xl my-3 mb-6 font-semibold text-gray-900'>{t(config.question)}</h1>
+      </div>
 
-      <div id="introduction" className='my-4'>
-        {config.intro &&
-          <div className='max-w-xl m-auto mb-4 text-justify italic' dangerouslySetInnerHTML={{
-            __html: converter.makeHtml(t(config.intro) || '')
-          }} />}
-        <div id="big-map">
-          <Map {...props} translator={{...translator, t}} color={color} width={450} height={450} />
-          <button className="my-2 underline"
+      {/* イントロダクション */}
+      <div id="introduction" className='mb-8'>
+        {config.intro && (
+          <div className='content-card markdown-content' 
+               dangerouslySetInnerHTML={{
+                 __html: converter.makeHtml(t(config.intro) || '')
+               }} />
+        )}
+        
+        {/* メインマップセクション */}
+        <div className="content-card text-center">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">�� データ可視化マップ</h3>
+          <div className="map-container">
+            <Map {...props} translator={{...translator, t}} color={color} width={450} height={450} />
+          </div>
+          <button 
+            className="mobile-button mt-4 underline"
             onClick={() => {
               if (isTouchDevice()) {
                 alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
@@ -98,41 +113,107 @@ function Report(props: ReportProps) {
                 setOpenMap("main")
               }
             }}>
-            {t("Open full-screen map")}</button>
+            {t("Open full-screen map")}
+          </button>
         </div>
-        <div id="overview" className='text-left font-bold my-3'>{t("Overview")}:</div>
-        <div className='text-left'>{t(overview)}</div>
+        
+        {/* 概要セクション */}
+        <div className="content-card">
+          <h3 className='text-xl font-bold mb-4 text-gray-800 border-b-2 border-gray-200 pb-2'>
+            📋 {t("Overview")}
+          </h3>
+          <div className='markdown-content' 
+               dangerouslySetInnerHTML={{
+                 __html: converter.makeHtml(t(overview) || '')
+               }} />
+        </div>
       </div>
+      
+      {/* クラスター分析セクション */}
       <div id="clusters">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">
+          🎯 クラスター別詳細分析
+        </h2>
+        
         {clusters.sort((c1, c2) => c2.arguments.length - c1.arguments.length)
-          .map((cluster) => <div key={cluster.cluster_id} id={`cluster-${cluster.cluster_id}`}>
-            <h2 className="text-2xl font-semibold my-2 mt-12"
-              style={{ color: color(cluster.cluster_id) }}>{t(cluster.cluster)}</h2>
-            <div className="text-lg opacity-50 mb-3">({cluster.arguments.length} {t("arguments")}、
-              {Math.round(100 * cluster.arguments.length / totalArgs)}% {t("of total")}{t("%)}")}</div>
-            <div className='text-left font-bold my-3'>{t("Cluster analysis")}:</div>
-            <div className='text-left'>{t(cluster.takeaways)}</div>
-            <div className='my-4'>
-              <Map  {...props} translator={{...translator, t}} color={color} width={350} height={350} onlyCluster={t(cluster.cluster_id)} />
-              <button className="my-2 underline" onClick={() => {
-                if (isTouchDevice()) {
-                  alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
-                } else {
-                  scroll.current = window.scrollY
-                  setOpenMap(cluster.cluster_id)
-                }
-              }}>{t("Open full-screen map")}</button>
+          .map((cluster, index) => (
+            <div key={cluster.cluster_id} 
+                 id={`cluster-${cluster.cluster_id}`} 
+                 className="cluster-section"
+                 style={{ borderLeftColor: color(cluster.cluster_id) }}>
+              
+              {/* クラスタータイトル */}
+              <h2 className="text-2xl font-semibold mb-3"
+                  style={{ color: color(cluster.cluster_id) }}>
+                {`${index + 1}. ${t(cluster.cluster)}`}
+              </h2>
+              
+              {/* 統計情報 */}
+              <div className="stats-text mb-4">
+                💬 {cluster.arguments.length} {t("arguments")} | 
+                📊 全体の {Math.round(100 * cluster.arguments.length / totalArgs)}%
+              </div>
+              
+              {/* クラスター分析 */}
+              <div className="mb-6">
+                <h4 className='text-lg font-bold mb-3 text-gray-800'>
+                  🔍 {t("Cluster analysis")}
+                </h4>
+                <div className='markdown-content'
+                     dangerouslySetInnerHTML={{
+                       __html: converter.makeHtml(t(cluster.takeaways) || '')
+                     }} />
+              </div>
+              
+              {/* クラスターマップ */}
+              <div className='text-center mb-6'>
+                <h4 className='text-lg font-bold mb-3 text-gray-800'>
+                  🗺️ このクラスターの分布
+                </h4>
+                <div className="cluster-map">
+                  <Map {...props} 
+                       translator={{...translator, t}} 
+                       color={color} 
+                       width={350} 
+                       height={350} 
+                       onlyCluster={t(cluster.cluster_id)} />
+                </div>
+                <button 
+                  className="mobile-button mt-3 underline" 
+                  onClick={() => {
+                    if (isTouchDevice()) {
+                      alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
+                    } else {
+                      scroll.current = window.scrollY
+                      setOpenMap(cluster.cluster_id)
+                    }
+                  }}>
+                  {t("Open full-screen map")}
+                </button>
+              </div>
+              
+              {/* 代表的なコメント */}
+              <div>
+                <h4 className='text-lg font-bold mb-3 text-gray-800'>
+                  💭 {t("Representative comments")}
+                </h4>
+                <div className='representative-comments'>
+                  <ul className='space-y-2'>
+                    {cluster.arguments
+                      .sort((a, b) => b.p - a.p)
+                      .slice(0, 5)
+                      .map((arg, i) => (
+                        <li key={i} className='italic text-gray-700'>
+                          "{t(arg.argument)}"
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              </div>
             </div>
-            <div className='text-left font-bold my-3'>{t("Representative comments")}:</div>
-            <ul className='text-left list-outside list-disc ml-6 '>
-              {cluster.arguments
-                .sort((a, b) => b.p - a.p)
-                .slice(0, 5).map((arg, i) =>
-                  <li key={i} className='italic'>{t(arg.argument)}</li>
-                )}
-            </ul>
-          </div>)}
+          ))}
       </div>
+      
       <Appendix config={config} translator={{...translator, t}} />
     </div>
   </div>

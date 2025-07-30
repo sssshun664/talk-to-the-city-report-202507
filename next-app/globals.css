@@ -22,16 +22,239 @@ html,
 body {
   overscroll-behavior: none;
   font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.7;
+  scroll-behavior: smooth;
 }
 
-/* 日本語テキストの行間調整 */
+/* 日本語テキストの基本調整 */
 .japanese-text {
-  line-height: 1.7;
+  line-height: 1.8;
   letter-spacing: 0.05em;
 }
 
-/* 日本語の見出し調整 */
+/* スマートフォン対応 */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* iOSでズームを防ぐ */
+  }
+  
+  .text-3xl {
+    font-size: 1.75rem !important; /* モバイルで見出しサイズ調整 */
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Markdownコンテンツのスタイリング */
+.markdown-content {
+  line-height: 1.8;
+  color: #374151;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #1f2937;
+}
+
+.markdown-content h3 {
+  font-size: 1.25rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.markdown-content h4 {
+  font-size: 1.125rem;
+  color: #4f46e5;
+}
+
+.markdown-content p {
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.markdown-content em {
+  font-style: italic;
+  color: #6b7280;
+}
+
+.markdown-content hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, #e5e7eb, #d1d5db, #e5e7eb);
+  margin: 2rem 0;
+  border-radius: 1px;
+}
+
+/* カードレイアウト */
+.content-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border: 1px solid #f3f4f6;
+}
+
+@media (max-width: 768px) {
+  .content-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+}
+
+/* クラスターセクション */
+.cluster-section {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-left: 4px solid;
+}
+
+@media (max-width: 768px) {
+  .cluster-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+  }
+}
+
+/* ボタンのスマートフォン対応 */
+.mobile-button {
+  min-height: 44px; /* Appleの推奨タッチサイズ */
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mobile-button:hover {
+  background-color: #4338ca;
+}
+
+.mobile-button:active {
+  background-color: #3730a3;
+}
+
+/* マップのレスポンシブ対応 */
+.map-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .map-container svg {
+    max-width: 100%;
+    height: auto !important;
+  }
+}
+
+/* クラスターマップの調整 */
+.cluster-map {
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .cluster-map {
+    max-width: 100%;
+  }
+  
+  .cluster-map svg {
+    max-width: 100%;
+    height: auto !important;
+  }
+}
+
+/* コンテンツ幅の制限 */
+.content-container {
+  max-width: 4xl;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 0 0.75rem;
+  }
+}
+
+/* 統計表示の改善 */
+.stats-text {
+  background: #f8fafc;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* 見出しの日本語対応 */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   line-height: 1.4;
+  letter-spacing: 0.025em;
+}
+
+/* リスト項目の改善 */
+.representative-comments {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid #d1d5db;
+}
+
+.representative-comments li {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .representative-comments li {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
 }
