@@ -12,6 +12,35 @@ import showdown from 'showdown';
 type ReportProps = Result
 const converter = new showdown.Converter();
 
+// 日本語UIラベル定数
+const JA_LABELS: { [key: string]: string } = {
+  "Open full-screen map": "フルスクリーンマップを開く",
+  "Overview": "概要",
+  "arguments": "個の議論",
+  "of total": "（全体の",
+  "Cluster analysis": "クラスター分析",
+  "Representative comments": "代表的なコメント",
+  "Introduction": "はじめに",
+  "Clusters": "クラスター",
+  "Appendix": "付録",
+  "Back to report": "レポートに戻る",
+  "Hide labels": "ラベルを隠す",
+  "Show labels": "ラベルを表示",
+  "Show filters": "フィルターを表示",
+  "Hide filters": "フィルターを隠す",
+  "Min. votes": "最小投票数",
+  "Consensus": "合意度",
+  "Showing": "表示中",
+  "Reset zoom": "ズームをリセット",
+  "Click anywhere on the map to close this": "マップのどこかをクリックして閉じる",
+  "Click on the dot for details": "詳細を見るには点をクリック",
+  "agree": "賛成",
+  "disagree": "反対",
+  "Language": "言語",
+  "English": "英語",
+  "%)": "%）"
+};
+
 function Report(props: ReportProps) {
 
   const [openMap, setOpenMap] = useState<string | null>(null)
@@ -25,18 +54,29 @@ function Report(props: ReportProps) {
   useEffect(() => { setReady(true) }, [])
   if (!ready) return false
 
-  const { t } = translator
+  // 日本語対応のt関数（型を元の関数に合わせる）
+  const { t: originalT } = translator
+  const t = (txt?: string): string | undefined => {
+    if (!txt) return txt;
+    // まず日本語ラベルをチェック
+    if (JA_LABELS[txt]) {
+      return JA_LABELS[txt];
+    }
+    // 翻訳が設定されている場合は元のt関数を使用
+    return originalT(txt);
+  }
+
   const totalArgs = clusters.map(c => c.arguments.length).reduce((a, b) => a + b, 0)
 
   if (openMap) {
-    return <Map {...props} color={color} translator={translator} back={() => {
+    return <Map {...props} color={color} translator={{...translator, t}} back={() => {
       setOpenMap(null)
       setTimeout(() => window.scrollTo({ top: scroll.current }), 0)
     }} fullScreen onlyCluster={openMap !== 'main' ? openMap : undefined} />
   }
   return <div className='mt-9'>
-    <Outline clusters={clusters} translator={translator} />
-    <Header {...props} translator={translator} />
+    <Outline clusters={clusters} translator={{...translator, t}} />
+    <Header {...props} translator={{...translator, t}} />
     <div className='text-center max-w-3xl m-auto py-8 px-5'
       style={{ display: openMap ? 'none' : 'block' }}>
       <h2 className='text-xl my-3 font-bold'>{t(config.name)}</h2>
@@ -45,14 +85,14 @@ function Report(props: ReportProps) {
       <div id="introduction" className='my-4'>
         {config.intro &&
           <div className='max-w-xl m-auto mb-4 text-justify italic' dangerouslySetInnerHTML={{
-            __html: converter.makeHtml(t(config.intro)!)
+            __html: converter.makeHtml(t(config.intro) || '')
           }} />}
         <div id="big-map">
-          <Map {...props} translator={translator} color={color} width={450} height={450} />
+          <Map {...props} translator={{...translator, t}} color={color} width={450} height={450} />
           <button className="my-2 underline"
             onClick={() => {
               if (isTouchDevice()) {
-                alert('Our interactive maps are not yet available on touch devices. Please try again from a desktop computer.')
+                alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
               } else {
                 scroll.current = window.scrollY
                 setOpenMap("main")
@@ -68,15 +108,15 @@ function Report(props: ReportProps) {
           .map((cluster) => <div key={cluster.cluster_id} id={`cluster-${cluster.cluster_id}`}>
             <h2 className="text-2xl font-semibold my-2 mt-12"
               style={{ color: color(cluster.cluster_id) }}>{t(cluster.cluster)}</h2>
-            <div className="text-lg opacity-50 mb-3">({cluster.arguments.length} {t("arguments")},
-              {Math.round(100 * cluster.arguments.length / totalArgs)}% {t("of total")})</div>
+            <div className="text-lg opacity-50 mb-3">({cluster.arguments.length} {t("arguments")}、
+              {Math.round(100 * cluster.arguments.length / totalArgs)}% {t("of total")}{t("%)}")}</div>
             <div className='text-left font-bold my-3'>{t("Cluster analysis")}:</div>
             <div className='text-left'>{t(cluster.takeaways)}</div>
             <div className='my-4'>
-              <Map  {...props} translator={translator} color={color} width={350} height={350} onlyCluster={t(cluster.cluster_id)} />
+              <Map  {...props} translator={{...translator, t}} color={color} width={350} height={350} onlyCluster={t(cluster.cluster_id)} />
               <button className="my-2 underline" onClick={() => {
                 if (isTouchDevice()) {
-                  alert('Our interactive maps are not yet available on touch devices. Please try again from a desktop computer.')
+                  alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
                 } else {
                   scroll.current = window.scrollY
                   setOpenMap(cluster.cluster_id)
@@ -93,7 +133,7 @@ function Report(props: ReportProps) {
             </ul>
           </div>)}
       </div>
-      <Appendix config={config} translator={translator} />
+      <Appendix config={config} translator={{...translator, t}} />
     </div>
   </div>
 }

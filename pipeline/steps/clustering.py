@@ -38,53 +38,39 @@ def cluster_embeddings(
     # (!) we import the following modules dynamically for a reason
     # (they are slow to load and not required for all pipelines)
     SpectralClustering = import_module('sklearn.cluster').SpectralClustering
-    stopwords = import_module('nltk.corpus').stopwords
-    HDBSCAN = import_module('hdbscan').HDBSCAN
     UMAP = import_module('umap').UMAP
-    CountVectorizer = import_module(
-        'sklearn.feature_extraction.text').CountVectorizer
-    BERTopic = import_module('bertopic').BERTopic
 
     umap_model = UMAP(
         random_state=42,
         n_components=n_components,
     )
-    hdbscan_model = HDBSCAN(min_cluster_size=min_cluster_size)
 
-    stop = stopwords.words("english")
-    vectorizer_model = CountVectorizer(stop_words=stop)
-    topic_model = BERTopic(
-        umap_model=umap_model,
-        hdbscan_model=hdbscan_model,
-        vectorizer_model=vectorizer_model,
-        verbose=True,
-    )
-
-    # Fit the topic model.
-    _, __ = topic_model.fit_transform(docs, embeddings=embeddings)
-
+    # 日本語対応：埋め込みベクトルのみでクラスタリング
     n_samples = len(embeddings)
     n_neighbors = min(n_samples - 1, 10)
     spectral_model = SpectralClustering(
         n_clusters=n_topics,
         affinity="nearest_neighbors",
-        n_neighbors=n_neighbors,  # Use the modified n_neighbors
+        n_neighbors=n_neighbors,
         random_state=42
     )
+    
+    # UMAP降次元
     umap_embeds = umap_model.fit_transform(embeddings)
+    
+    # スペクトラルクラスタリング実行
     cluster_labels = spectral_model.fit_predict(umap_embeds)
 
-    result = topic_model.get_document_info(
-        docs=docs,
-        metadata={
-            **metadatas,
-            "x": umap_embeds[:, 0],
-            "y": umap_embeds[:, 1],
-        },
-    )
-
-    result.columns = [c.lower() for c in result.columns]
-    result = result[['arg-id', 'x', 'y', 'probability']]
-    result['cluster-id'] = cluster_labels
-
+    # 結果データフレーム作成
+    result_data = []
+    for i, (doc, cluster_id) in enumerate(zip(docs, cluster_labels)):
+        result_data.append({
+            'arg-id': metadatas['arg-id'][i],
+            'x': float(umap_embeds[i, 0]),
+            'y': float(umap_embeds[i, 1]),
+            'probability': 1.0,  # 確信度は1.0で固定
+            'cluster-id': int(cluster_id)
+        })
+    
+    result = pd.DataFrame(result_data)
     return result

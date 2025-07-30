@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,4 +21,17 @@
 html,
 body {
   overscroll-behavior: none;
+  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 日本語テキストの行間調整 */
+.japanese-text {
+  line-height: 1.7;
+  letter-spacing: 0.05em;
+}
+
+/* 日本語の見出し調整 */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  line-height: 1.4;
 }

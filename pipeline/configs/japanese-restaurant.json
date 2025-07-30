@@ -1,0 +1,38 @@
+{
+  "name": "レストランレビュー分析",
+  "question": "このレストランについてのご感想をお聞かせください",
+  "input": "restaurant-reviews",
+  "model": "gpt-4.1-2025-04-14",
+  "intro": "日本語のレストランレビューを分析し、顧客の意見傾向を可視化したレポートです。",
+  "extraction": {
+    "model": "gpt-4.1-2025-04-14",
+    "workers": 3,
+    "limit": 20,
+    "prompt_file": "japanese"
+  },
+  "clustering": {
+    "clusters": 5
+  },
+  "labelling": {
+    "model": "gpt-4.1-2025-04-14",
+    "sample_size": 30,
+    "prompt_file": "japanese"
+  },
+  "takeaways": {
+    "model": "gpt-4.1-2025-04-14",
+    "sample_size": 30,
+    "prompt_file": "japanese"
+  },
+  "overview": {
+    "model": "gpt-4.1-2025-04-14",
+    "prompt_file": "japanese"
+  },
+  "translation": {
+    "model": "gpt-4.1-2025-04-14",
+    "languages": [],
+    "flags": []
+  },
+  "visualization": {
+    "replacements": []
+  }
+}
