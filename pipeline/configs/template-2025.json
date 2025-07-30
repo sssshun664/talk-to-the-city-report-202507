@@ -1,0 +1,38 @@
+{
+  "name": "Your Project Name",
+  "question": "Your consultation question here",
+  "input": "your-data-file-name",
+  "model": "gpt-4.1-2025-04-14",
+  "intro": "Brief introduction to your project",
+  "extraction": {
+    "model": "gpt-4.1-2025-04-14",
+    "workers": 3,
+    "limit": 1000,
+    "prompt_file": "default"
+  },
+  "clustering": {
+    "clusters": 8
+  },
+  "labelling": {
+    "model": "gpt-4.1-2025-04-14",
+    "sample_size": 30,
+    "prompt_file": "default"
+  },
+  "takeaways": {
+    "model": "gpt-4.1-2025-04-14",
+    "sample_size": 30,
+    "prompt_file": "default"
+  },
+  "overview": {
+    "model": "gpt-4.1-2025-04-14",
+    "prompt_file": "default"
+  },
+  "translation": {
+    "model": "gpt-4.1-2025-04-14",
+    "languages": [],
+    "flags": []
+  },
+  "visualization": {
+    "replacements": []
+  }
+} 

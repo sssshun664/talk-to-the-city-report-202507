@@ -1,0 +1,19 @@
+{
+  "name": "AI Discussion Test",
+  "question": "What should be the priorities for AI development and governance?",
+  "input": "test-data",
+  "model": "gpt-4.1-2025-04-14",
+  "extraction": {
+    "workers": 1,
+    "limit": 15
+  },
+  "clustering": {
+    "clusters": 3
+  },
+  "translation": {
+    "model": "gpt-4.1-2025-04-14",
+    "languages": [],
+    "flags": []
+  },
+  "intro": "This is a test report using sample AI governance comments."
+}
