@@ -5,7 +5,6 @@ import useTranslatorAndReplacements from '@/hooks/useTranslatorAndReplacements';
 import Map from './Map';
 import Header from './Header';
 import Appendix from './Appendix';
-import Outline from './Outline';
 import { isTouchDevice } from '@/utils';
 import showdown from 'showdown';
 
@@ -76,7 +75,6 @@ function Report(props: ReportProps) {
   }
   
   return <div className='mt-6 pb-8'>
-    <Outline clusters={clusters} translator={{...translator, t}} />
     <Header {...props} translator={{...translator, t}} />
     
     <div className='content-container'
@@ -99,7 +97,7 @@ function Report(props: ReportProps) {
         
         {/* メインマップセクション */}
         <div className="content-card text-center">
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">�� データ可視化マップ</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">📊 データ可視化マップ</h3>
           <div className="map-container">
             <Map {...props} translator={{...translator, t}} color={color} width={450} height={450} />
           </div>
