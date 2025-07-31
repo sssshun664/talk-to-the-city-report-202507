@@ -42,6 +42,24 @@ function Map(props: MapProps) {
   const [minConsensus, setMinConsensus] = useState(50);
   const voteFilter = useFilter(clusters, comments, minVotes, minConsensus, dataHasVotes)
 
+  // タッチデバイス専用のイベントハンドラー
+  const handleTouchInteraction = (e: any) => {
+    const point = findPoint(e);
+    if (point?.data) {
+      if (tooltip && tooltip.arg_id === point.data.arg_id && !expanded) {
+        setExpanded(true);
+        zoom.disable();
+      } else {
+        setExpanded(false);
+        setTooltip(point.data);
+        zoom.enable();
+      }
+    } else {
+      setTooltip(null);
+      setExpanded(false);
+    }
+  };
+
   if (!dimensions) {
     console.log('NO DIMENSIONS???')
     return <div
@@ -52,13 +70,15 @@ function Map(props: MapProps) {
   const { scaleX, scaleY, width, height } = dimensions;
   const { t } = translator
 
-  return <div
-    className='m-auto relative bg-blue-50'
-    style={{ width, height, overflow: fullScreen ? 'hidden' : 'visible' }}
-    onMouseLeave={() => { if (!expanded) setTooltip(null) }}
-  >
-    <svg width={width!} height={height!}
-      {...isTouchDevice() ? {} : zoom.events({
+  // デバイス別のイベント設定
+  const getEvents = () => {
+    if (isTouchDevice()) {
+      return {
+        onClick: handleTouchInteraction,
+        onTouchStart: handleTouchInteraction,
+      };
+    } else {
+      return zoom.events({
         onClick: (e: any) => {
           if (tooltip && !expanded) {
             setExpanded(true)
@@ -77,19 +97,31 @@ function Map(props: MapProps) {
         onDrag: () => {
           setTooltip(null)
         }
-      })}>
+      });
+    }
+  };
+
+  return <div
+    className='m-auto relative bg-blue-50'
+    style={{ width, height, overflow: fullScreen ? 'hidden' : 'visible' }}
+    onMouseLeave={() => { if (!expanded && !isTouchDevice()) setTooltip(null) }}
+  >
+    <svg width={width!} height={height!}
+      {...getEvents()}>
       {/* DOT CIRCLES */}
       {clusters.map((cluster) =>
         cluster.arguments.filter(voteFilter.filter).map(({ arg_id, x, y }) =>
           <circle
-            className='pointer-events-none'
+            className={isTouchDevice() ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'}
             key={arg_id}
             id={arg_id}
             cx={zoom.zoomX(scaleX(x))}
             cy={zoom.zoomY(scaleY(y))}
             fill={color(cluster.cluster_id, onlyCluster)}
             opacity={(expanded && tooltip?.arg_id !== arg_id) ? 0.3 : 1}
-            r={(tooltip?.arg_id === arg_id ? 8 : 4)} />
+            r={(tooltip?.arg_id === arg_id ? (isTouchDevice() ? 10 : 8) : (isTouchDevice() ? 6 : 4))}
+            stroke={isTouchDevice() ? '#fff' : 'none'}
+            strokeWidth={isTouchDevice() ? 1 : 0} />
         ))}
     </svg>
     {/* CLUSTER LABELS */}

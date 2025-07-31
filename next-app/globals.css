@@ -328,6 +328,80 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* スマートフォン専用マップ最適化 */
+@media (max-width: 768px) and (pointer: coarse) {
+  /* SVGマップ全体の最適化 */
+  svg {
+    touch-action: manipulation !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+  }
+  
+  /* ノード（点）の視認性向上 */
+  svg circle {
+    stroke-width: 1.5px !important;
+    stroke: rgba(255, 255, 255, 0.8) !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) !important;
+  }
+  
+  /* アクティブ状態の強調 */
+  svg circle.active,
+  svg circle[r="10"] {
+    stroke-width: 3px !important;
+    stroke: #ffffff !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+  }
+  
+  /* クラスターラベルの改善 */
+  .absolute.opacity-90 {
+    font-size: 0.9rem !important;
+    padding: 0.5rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+  
+  /* ツールチップのスマートフォン対応 */
+  [role="tooltip"] {
+    font-size: 0.85rem !important;
+    max-width: calc(100vw - 3rem) !important;
+    z-index: 1001 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  }
+  
+  /* マップコンテナの改善 */
+  .m-auto.relative.bg-blue-50 {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* タッチ専用の追加スタイル */
+@media (hover: none) and (pointer: coarse) {
+  /* タッチデバイスでホバー効果を無効化 */
+  svg circle:hover {
+    stroke-width: inherit !important;
+  }
+  
+  /* タップ時の視覚フィードバック */
+  svg circle:active {
+    transform: scale(1.1) !important;
+    transition: transform 0.1s ease !important;
+  }
+  
+  /* ラベルのタッチ無効化 */
+  .pointer-events-none {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+}
+
 /* 確認ダイアログのスタイル改善 */
 .mobile-confirm {
   font-family: 'Noto Sans JP', sans-serif !important;
