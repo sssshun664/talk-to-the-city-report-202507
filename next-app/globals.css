@@ -258,3 +258,78 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.95rem;
   }
 }
+
+/* フルスクリーンマップのスマートフォン最適化 */
+@media (max-width: 768px) {
+  /* フルスクリーンマップのコントロールボタン */
+  .absolute button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    margin: 0.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* フィルター パネル */
+  .absolute div[class*="w-[400px]"] {
+    width: calc(100vw - 2rem) !important;
+    max-width: 350px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* レンジスライダー */
+  .absolute input[type="range"] {
+    width: 150px !important;
+    height: 44px !important;
+  }
+  
+  /* ツールチップの調整 */
+  [role="tooltip"] {
+    font-size: 0.9rem !important;
+    max-width: calc(100vw - 2rem) !important;
+    z-index: 1000 !important;
+  }
+  
+  /* SVGマップのタッチ操作改善 */
+  svg {
+    touch-action: pan-x pan-y pinch-zoom !important;
+    user-select: none !important;
+  }
+  
+  /* マップ点の最小タッチサイズ */
+  svg circle {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* タッチデバイス全般でのマップ操作改善 */
+@media (pointer: coarse) {
+  svg {
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+  
+  svg circle {
+    r: max(4px, attr(r)); /* 点を少し大きく */
+  }
+  
+  /* ホバー効果をタップ効果に変更 */
+  svg circle:hover {
+    stroke-width: 3px;
+  }
+  
+  svg circle:active {
+    stroke-width: 4px;
+    fill-opacity: 0.8;
+  }
+}
+
+/* 確認ダイアログのスタイル改善 */
+.mobile-confirm {
+  font-family: 'Noto Sans JP', sans-serif !important;
+  line-height: 1.6 !important;
+}

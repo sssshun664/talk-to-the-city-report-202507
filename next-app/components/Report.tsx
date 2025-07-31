@@ -65,6 +65,23 @@ function Report(props: ReportProps) {
     return originalT(txt);
   }
 
+  // フルスクリーンマップを開く関数（タッチデバイス対応）
+  const openFullScreenMap = (mapType: string) => {
+    if (isTouchDevice()) {
+      const confirmed = window.confirm(
+        "スマートフォンでのマップ操作は制限があります。\n" +
+        "・ピンチ操作でズーム可能\n" +
+        "・ドラッグでマップ移動可能\n" +
+        "・点をタップで詳細表示\n\n" +
+        "続行しますか？"
+      );
+      if (!confirmed) return;
+    }
+    
+    scroll.current = window.scrollY;
+    setOpenMap(mapType);
+  }
+
   const totalArgs = clusters.map(c => c.arguments.length).reduce((a, b) => a + b, 0)
 
   if (openMap) {
@@ -103,15 +120,13 @@ function Report(props: ReportProps) {
           </div>
           <button 
             className="mobile-button mt-4 underline"
-            onClick={() => {
-              if (isTouchDevice()) {
-                alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
-              } else {
-                scroll.current = window.scrollY
-                setOpenMap("main")
-              }
-            }}>
+            onClick={() => openFullScreenMap("main")}>
             {t("Open full-screen map")}
+            {isTouchDevice() && (
+              <span className="block text-sm text-gray-600 mt-1">
+                📱 スマートフォン対応
+              </span>
+            )}
           </button>
         </div>
         
@@ -178,15 +193,13 @@ function Report(props: ReportProps) {
                 </div>
                 <button 
                   className="mobile-button mt-3 underline" 
-                  onClick={() => {
-                    if (isTouchDevice()) {
-                      alert('インタラクティブマップはタッチデバイスではまだ利用できません。デスクトップコンピューターからお試しください。')
-                    } else {
-                      scroll.current = window.scrollY
-                      setOpenMap(cluster.cluster_id)
-                    }
-                  }}>
+                  onClick={() => openFullScreenMap(cluster.cluster_id)}>
                   {t("Open full-screen map")}
+                  {isTouchDevice() && (
+                    <span className="block text-sm text-gray-600 mt-1">
+                      📱 スマートフォン対応
+                    </span>
+                  )}
                 </button>
               </div>
               
